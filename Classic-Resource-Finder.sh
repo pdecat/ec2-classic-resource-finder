@@ -56,9 +56,15 @@ do
         then classicstatusfiltered=`jq -r '.AccountAttributes[] .AttributeValues[] | select(.AttributeValue=="EC2") | .AttributeValue' <<< $classicstatus 2>> errors.txt` ##Filter the input to determine if EC2 (classic) is supported
             if [[ ${#classicstatusfiltered} -gt 2 ]]
                 then printf "$region, Enabled\n" >> Classic_Platform_Status.csv ## If supported platforms includes EC2 in addition to VPC, output the region and Enabled to a CSV
-                else printf "$region, Disabled\n" >> Classic_Platform_Status.csv ## If supported platforms is only VPC and does not include EC2, output the region and Disabled to a CSV
+                else
+                printf "$region, Disabled\n" >> Classic_Platform_Status.csv ## If supported platforms is only VPC and does not include EC2, output the region and Disabled to a CSV
+                printf "Disabled \xe2\x9c\x85 \n"
+                continue
             fi
-        else printf "$region, Unknown\n" >> Classic_Platform_Status.csv
+        else
+            printf "$region, Unknown\n" >> Classic_Platform_Status.csv
+            printf "There were errors, see errors.txt \xe2\x9c\x85 \n"
+            continue
     fi
     printf "Done \xe2\x9c\x85 \n"
 
